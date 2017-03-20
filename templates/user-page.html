@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <title>Nerbs - A Twitter Clone</title>
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Tangerine:700" rel="stylesheet"> 
+    <link href="{{ url_for('static', filename='css/user-page.css') }}" rel="stylesheet">
+</head>
+
+
+<body id="bootstrap-override">
+    <div class="container">
+
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation"><a href="/">Log Out</a></li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">Nerbs - A Twitter App made with Python and Flask</h3>
+        </div>
+
+        <section>
+            <form class="form-horizontal" method="POST" action="/addPost">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Create Your Post</legend>
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" for="txtTitle">Title</label>
+                        <div class="col-md-11">
+                            <input id="txtTitle" name="inputTitle" type="text" placeholder="Enter title here" class="form-control input-md">
+                        </div>
+                    </div>
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" for="txtPost">Post</label>
+                        <div class="col-md-11">
+                            <textarea class="form-control" id="txtPost" name="inputDescription" placeholder="Enter text here"></textarea>
+                        </div>
+                    </div>
+                    <!-- Button -->
+                    <div class="form-group">
+                        <label class="col-md-1 control-label" for="singlebutton"></label>
+                        <div class="col-md-11">
+                            <input id="singlebutton" name="singlebutton" class="btn btn-primary" type="submit" value="Publish">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </section>
+
+        <!-- . references the current object -->
+        <div class="username-header-html"></div>
+
+        <div class="list-group"></div>
+
+        <footer class="footer">
+            <p>&copy; CoxDev, LLC 2017</p>
+        </footer>
+
+    </div>
+
+
+    <script id="username-header-scrpt" type="text/mustache">
+        <%#.%> <!--  '.' references the current object -->
+            <h1><%Username%>'s Tweets</h1>
+        <%/.%>
+    </script>
+
+
+    <script id="tweetList" type="text/mustache">
+        <%#.%> <!-- . references the current object -->
+            <a href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading col-md-6"><%Title%></h4>
+                <h6 class="tweet-date col-md-6"><%Date%></h6>
+                <p class="list-group-item-text col-md-12"><%Text%></p>
+            </a>
+        <%/.%>
+    </script>
+
+
+    <script type="text/javascript" src="../static/js/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.fileupload-process.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.fileupload-ui.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+    <script type="text/javascript" src="../static/js/user-page.js"></script>
+    <script type="text/javascript" src="../static/js/get-user-posts.js"></script>
+
+</body>
+
+</html>

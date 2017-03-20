@@ -1,0 +1,187 @@
+**** MySQL Code & Tables ****
+
+-- ---
+-- Globals
+-- ---
+
+-- SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+-- SET FOREIGN_KEY_CHECKS=0;
+
+-- ---
+-- Table 'users'
+-- 
+-- ---
+
+
+
+***************************************************************************
+*************************   SET UP SQL TABLES   ***************************
+***************************************************************************
+
+DROP TABLE IF EXISTS `twitter`.`users`;
+		
+CREATE TABLE `twitter`.`users` (
+  `user_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(25),
+  PRIMARY KEY (`user_id`)
+);
+
+-- ---
+-- Table 'posts'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `twitter`.`posts`;
+		
+CREATE TABLE `twitter`.`posts` (
+  `post_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `date` DATE,
+  `title` VARCHAR(50),
+  `text` VARCHAR(100),
+  PRIMARY KEY (`post_id`)
+);
+
+-- ---
+-- Foreign Keys 
+-- ---
+
+**** Use this one ****
+ALTER TABLE posts 
+ADD CONSTRAINT FK_posts 
+FOREIGN KEY (user_id) REFERENCES users(user_id)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+
+**** Not this one ****
+ALTER TABLE `posts` 
+ADD CONSTRAINT FK_posts 
+FOREIGN KEY (user_id) REFERENCES `users` (`user_id`);
+
+
+-- ---
+-- Table Properties
+-- ---
+
+-- ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `posts` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ---
+-- Test Data
+-- ---
+
+-- INSERT INTO `users` (`user_id`,`username`) VALUES
+-- ('','');
+-- INSERT INTO `posts` (`post_id`,`user_id`,`date`,`title`,`text`) VALUES
+-- ('','','','','');
+
+
+SELECT post FROM tweets WHERE user=1;  // to link post to user
+
+
+
+***************************************************************************
+**********  STORED PROCEDURE TO ADD/CHECK USERNAME TO DATABASE  ***********
+***************************************************************************
+
+DELIMITER $$
+CREATE DEFINER=`shaun`@`localhost` PROCEDURE `sp_createUser`(
+    IN p_username VARCHAR(25)
+)
+BEGIN
+    if ( select exists (select 1 from users where username = p_username) ) THEN
+        select 'Username Exists !!';
+    ELSE
+        insert into users
+        (
+            username
+        )
+        values
+        (
+            p_username
+        );
+
+    END IF;
+END$$
+DELIMITER ;
+
+
+***************************************************************************
+************  STORED PROCEDURE TO GET USER_ID FROM DATABASE  **************
+***************************************************************************
+
+DELIMITER $$
+CREATE DEFINER=`shaun`@`localhost` PROCEDURE `sp_validateLogin`(
+IN p_username VARCHAR(20)
+)
+BEGIN
+    select user_id from users where username = p_username;
+END$$
+DELIMITER ;
+
+
+***************************************************************************
+***************  STORED PROCEDURE TO ADD POST TO DATABASE  ****************
+***************************************************************************
+
+USE `twitter`;
+DROP procedure IF EXISTS `twitter`.`sp_addPost`;
+
+DELIMITER $$
+USE `twitter`$$
+CREATE DEFINER=`shaun`@`localhost` PROCEDURE `sp_addPost`(
+    IN p_user_id BIGINT,
+    IN p_title VARCHAR(50),
+    IN p_text VARCHAR(100)
+)
+BEGIN
+    insert into posts
+    (
+        user_id,
+        date,
+        title,
+        text
+    )
+    values
+    (
+        p_user_id,
+        NOW(),
+        p_title,
+        p_text
+    );
+END$$
+
+DELIMITER ;
+
+
+***************************************************************************
+********  STORED PROCEDURE TO GET_POSTS_BY_USER FROM TO DATABASE  *********
+***************************************************************************
+
+USE `twitter`;
+DROP procedure IF EXISTS `sp_getPostsByUser`;
+ 
+DELIMITER $$
+USE `twitter`$$
+CREATE PROCEDURE `sp_getPostsByUser` (
+IN p_user_id BIGINT
+)
+BEGIN
+    select * from posts where user_id = p_user_id;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+

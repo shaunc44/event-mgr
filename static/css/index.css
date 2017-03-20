@@ -1,0 +1,28 @@
+.text-muted {
+	padding-top: 10px;
+}
+
+#bootstrap-override .container .jumbotron {
+	background: blue !important; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(left top, blue, yellow) !important; /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(bottom right, blue, yellow) !important; /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(bottom right, blue, yellow) !important; /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to bottom right, blue, yellow) !important;
+}
+
+#nerbs-title {
+	text-shadow: -1px 0 #9d9d9d, 0 1px #9d9d9d, 1px 0 #9d9d9d, 0 -1px #9d9d9d;
+}
+
+.center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#login {
+	text-align: center
+}
+
+#login-register {
+	margin-top: 1.5em
+}

@@ -1,0 +1,169 @@
+-- ---
+-- Globals
+-- ---
+
+-- SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+-- SET FOREIGN_KEY_CHECKS=0;
+
+-- ---
+-- Table 'users'
+-- 
+-- ---
+
+
+***************************************************************************
+*************************   SET UP SQL TABLES   ***************************
+***************************************************************************
+
+DROP TABLE IF EXISTS `event_mgr`.`users`;
+		
+CREATE TABLE `event_mgr`.`users` (
+  `user_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (`user_id`)
+);
+
+
+ALTER TABLE  `event_mgr`.`users`
+MODIFY `password` VARCHAR(1000);
+
+
+-- ---
+-- Table 'events'
+-- -- ---
+
+DROP TABLE IF EXISTS `event_mgr`.`events`;
+		
+CREATE TABLE `event_mgr`.`events` (
+  `event_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(50) NOT NULL,
+  `description` VARCHAR(50) NOT NULL,
+  `location` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`event_id`)
+);
+
+
+-- ---
+-- Table 'users_events'
+-- -- ---
+
+DROP TABLE IF EXISTS `event_mgr`.`users_events`;
+		
+CREATE TABLE `event_mgr`.`users_events` (
+  `ue_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `event_id` BIGINT NOT NULL,
+  `date` DATE NOT NULL,
+  PRIMARY KEY (`ue_id`)
+);
+
+
+-- ---
+-- Foreign Keys 
+-- ---
+
+ALTER TABLE users_events 
+ADD CONSTRAINT FK_users_events 
+FOREIGN KEY (user_id) REFERENCES users (user_id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+ALTER TABLE users_events 
+ADD CONSTRAINT FK_users_events2 
+FOREIGN KEY (event_id) REFERENCES events (event_id) 
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+
+-- ---
+-- Table Properties
+-- ---
+
+-- ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `events` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `users_events` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ---
+-- Test Data
+-- ---
+
+-- INSERT INTO `users` (`user_id`,`email`,`password`) VALUES
+-- ('','','');
+-- INSERT INTO `events` (`event_id`,`title`,`description`,`location`) VALUES
+-- ('','','','');
+-- INSERT INTO `users_events` (`ue_id`,`user_id`,`event_id`,`date`) VALUES
+-- ('','','','');
+
+
+***************************************************************************
+*******  STORED PROCEDURE TO ADD/CHECK USER EMAIL & PW TO DATABASE  *******
+***************************************************************************
+
+DROP PROCEDURE IF EXISTS sp_createUser;
+
+DELIMITER $$
+CREATE DEFINER=`shaun`@`localhost` PROCEDURE `sp_createUser`(
+    IN p_email VARCHAR(50),
+    IN p_password VARCHAR(1000)
+)
+BEGIN
+    if ( select exists (select 1 from users where email = p_email) ) THEN
+        select 'Email Address Exists!!';
+    ELSE
+        insert into users
+        (
+            email,
+            password
+        )
+        values
+        (
+            p_email,
+            p_password
+        );
+
+    END IF;
+END$$
+DELIMITER ;
+
+
+***************************************************************************
+*************  STORED PROCEDURE TO VALIDATE USER IN DATABASE  *************
+***************************************************************************
+
+DROP PROCEDURE IF EXISTS sp_validateLogin;
+
+DELIMITER $$
+CREATE DEFINER=`shaun`@`localhost` PROCEDURE `sp_validateLogin`(
+IN p_email VARCHAR(50)
+)
+BEGIN
+    select * from users where email = p_email;
+END$$
+DELIMITER ;
+
+
+***************************************************************************
+*************  STORED PROCEDURE TO GET USER_ID FROM DATABASE  *************
+***************************************************************************
+
+DELIMITER $$
+CREATE DEFINER=`shaun`@`localhost` PROCEDURE `sp_getUserId`(
+IN p_email VARCHAR(50)
+)
+BEGIN
+    select user_id from users where email = p_email;
+END$$
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
