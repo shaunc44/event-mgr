@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, g, json, request, redirect, url_for, flash
 from flaskext.mysql import MySQL
 import datetime
+import os
 # from werkzeug import generate_password_hash, check_password_hash #Do I need this anymore?
 
 
@@ -8,6 +9,7 @@ mysql = MySQL()
 app = Flask(__name__, static_url_path='/static')
 #Don't store the secret key this way (always store in separate)
 app.secret_key = 'tobeornottobeasecretkey'
+# app.secret_key = os.urandom(50)
 
 
 # MySQL configurations
@@ -26,32 +28,71 @@ def main():
 	return render_template('index.html')
 
 
+@app.route('/logOut')
+def logOut():
+	session.clear()
+	return redirect('/')
+
+
 #Do I need this anymore?
 @app.route('/showUserPage')
 def showUserPage():
-	#add code here to show blank or existing user page????
 	return render_template('user-page.html')
 
 
-#From Kenso's twitter app
-# @app.route("/")
-# def server_frontpage():
-# 	tweets = model.Tweet.publ()
-# 	return render_template("index.html", tweets = tweets)
+#Implement this later
+
+# @app.route('/getPostsByUser')
+# def getPostsByUser():
+# 	try:
+# 		if session.get('user_id'):
+# 			_username = session.get('username')
+# 			_user_id = session.get('user_id')
+
+# 			con = mysql.connect()
+# 			cursor = con.cursor()
+# 			cursor.callproc('sp_getPostsByUser',(_user_id,))
+# 			posts = cursor.fetchall()
+
+# 			posts_dict = []
+# 			for post in reversed(posts):
+# 				print (type(post[2]))
+# 				post_dict = {
+# 					'Id': post[0],
+# 					'Title': post[3],
+# 					'Text': post[4],
+# 					'Date': post[2].strftime("%a, %b %d, %Y")
+# 				}
+# 				posts_dict.append(post_dict)
+
+# 			return json.dumps(posts_dict)
+# 		else:
+# 			return render_template('error.html', error = 'Unauthorized Access')
+# 	except Exception as e:
+# 		return render_template('error.html', error = str(e))
 
 
-@app.route('/addPost', methods=['POST'])
-def addPost():
+@app.route('/addUserEvent', methods=['POST'])
+def addUserEvent():
 	try:
-		if session.get('username'):
-			# _username = session.get('username')
+		if session.get('user_id'):
 			_user_id = session.get('user_id')
-			_title = request.form['inputTitle']
-			_text = request.form['inputDescription']
+			_title = session['title']
+			print (_user_id)
+			print (_title)
 
 			conn = mysql.connect()
 			cursor = conn.cursor()
-			cursor.callproc('sp_addPost',(_user_id, _title, _text))
+			cursor.callproc('sp_getEventId',(_title,))
+			_event = cursor.fetchone()
+			_event_id = _event[0][0]
+			print (_event)
+			print (_event_id)
+			cursor.close()
+			conn.close()
+
+			cursor.callproc('sp_addUserEvent',(_user_id, event_id))
+			conn.commit()
 			data = cursor.fetchall()
 
 			if len(data) is 0:
@@ -68,48 +109,51 @@ def addPost():
 		conn.close()
 
 
-@app.route('/getUsername')
-def getUsername():
-	_username = session.get('username')
-	uname = {
-		'Username': _username
-	}
-	uname_dict =[]
-	uname_dict.append(uname)
-	return json.dumps(uname_dict)
-
-
-@app.route('/getPostsByUser')
-def getPostsByUser():
+@app.route('/addEvent', methods=['POST'])
+def addEvent():
 	try:
 		if session.get('user_id'):
-			_username = session.get('username')
-			_user_id = session.get('user_id')
+			# _user_id = session.get('user_id')
+			_title = request.form['inputTitle']
+			_description = request.form['inputDescription']
+			_location = request.form['inputLocation']
+			session['title'] = _title
 
-			con = mysql.connect()
-			cursor = con.cursor()
-			cursor.callproc('sp_getPostsByUser',(_user_id,))
-			posts = cursor.fetchall()
+			conn = mysql.connect()
+			cursor = conn.cursor()
+			cursor.callproc('sp_addEvent',(_title, _description, _location))
+			conn.commit()
+			# cursor.callproc('sp_getEventId')
+			data = cursor.fetchall()
 
-			posts_dict = []
-			for post in reversed(posts):
-				print (type(post[2]))
-				post_dict = {
-					'Id': post[0],
-					'Title': post[3],
-					'Text': post[4],
-					'Date': post[2].strftime("%a, %b %d, %Y")
-				}
-				posts_dict.append(post_dict)
-
-			return json.dumps(posts_dict)
+			if len(data) is 0:
+				conn.commit()
+				cursor.close()
+				conn.close()
+				return redirect('/showUserPage')
+			else:
+				return render_template('error.html',error = 'An error occurred!')
 		else:
-			return render_template('error.html', error = 'Unauthorized Access')
+			return render_template('error.html',error = 'Unauthorized Access')
 	except Exception as e:
-		return render_template('error.html', error = str(e))
+		return render_template('error.html',error = str(e))
+	else:
+		cursor.close()
+		conn.close()
 
 
-# #This just enters user info into the DB
+# @app.route('/getUsername')
+# def getUsername():
+# 	_username = session.get('username')
+# 	uname = {
+# 		'Username': _username
+# 	}
+# 	uname_dict =[]
+# 	uname_dict.append(uname)
+# 	return json.dumps(uname_dict)
+
+
+# #This enters/verifies user info to/from the DB
 @app.route('/signUp', methods=['POST','GET'])
 def signUp():
 	try:

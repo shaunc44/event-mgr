@@ -3,7 +3,7 @@
 
 
 <head>
-    <title>Nerbs - A Twitter Clone</title>
+    <title>Event Manager</title>
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Tangerine:700" rel="stylesheet"> 
@@ -20,26 +20,33 @@
                     <li role="presentation"><a href="/">Log Out</a></li>
                 </ul>
             </nav>
-            <h3 class="text-muted">Nerbs - A Twitter App made with Python and Flask</h3>
+            <h3 class="text-muted">Event Manager</h3>
         </div>
 
         <section>
-            <form class="form-horizontal" method="POST" action="/addPost">
+            <form class="form-horizontal" method="POST" action="/addEvent">
                 <fieldset>
                     <!-- Form Name -->
-                    <legend>Create Your Post</legend>
-                    <!-- Text input-->
+                    <legend>Create Your Event</legend>
+                    <!-- Title input-->
                     <div class="form-group">
-                        <label class="col-md-1 control-label" for="txtTitle">Title</label>
-                        <div class="col-md-11">
+                        <label class="col-md-2 control-label" for="txtTitle">Title</label>
+                        <div class="col-md-10">
                             <input id="txtTitle" name="inputTitle" type="text" placeholder="Enter title here" class="form-control input-md">
                         </div>
                     </div>
-                    <!-- Textarea -->
+                    <!-- Description -->
                     <div class="form-group">
-                        <label class="col-md-1 control-label" for="txtPost">Post</label>
-                        <div class="col-md-11">
-                            <textarea class="form-control" id="txtPost" name="inputDescription" placeholder="Enter text here"></textarea>
+                        <label class="col-md-2 control-label" for="txtPost">Description</label>
+                        <div class="col-md-10">
+                            <textarea class="form-control" id="txtPost" name="inputDescription" placeholder="Enter description here"></textarea>
+                        </div>
+                    </div>
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="txtLocation">Location</label>
+                        <div class="col-md-10">
+                            <input id="txtLocation" name="inputLocation" type="text" placeholder="Enter location here" class="form-control input-md">
                         </div>
                     </div>
                     <!-- Button -->
@@ -90,7 +97,7 @@
     <script type="text/javascript" src="../static/js/jquery.fileupload-ui.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
     <script type="text/javascript" src="../static/js/user-page.js"></script>
-    <script type="text/javascript" src="../static/js/get-user-posts.js"></script>
+    <!-- <script type="text/javascript" src="../static/js/get-user-posts.js"></script> -->
 
 </body>
 
