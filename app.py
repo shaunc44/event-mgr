@@ -136,12 +136,6 @@ def addEvent():
 			# print ("Title: ", data[0][0])
 			# print ("AddEvent Data: ", data)
 
-			# if len(data) > 0:
-			# 	session['title'] = data[0][0]
-			# 	conn.commit()
-			# 	cursor.close()
-			# 	conn.close()
-			# 	return redirect('/showUserPage')
 			if len(data):
 				conn.commit()
 				cursor.close()
