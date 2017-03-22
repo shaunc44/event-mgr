@@ -1,9 +1,13 @@
 $(document).ready(function() {
-    $('#singlebutton').click(function(){
+    $('#singlebutton').on(function(event){
+
+        event.preventDefault(); // tells html to stop loading
+        // data = $('#login-register').serialize()
+
         $.ajax({
             url: '/addUserEvent',
-            data: $('form').serialize(),
-            type: 'POST',
+            data: $('#singlebutton').serialize(),
+            method: 'POST',
             success: function(response) {
                 console.log(response);
             },
@@ -14,3 +18,20 @@ $(document).ready(function() {
     });
 });
 
+
+
+// $(document).ready(function() {
+//     $('#singlebutton').click(function(){
+//         $.ajax({
+//             url: '/addUserEvent',
+//             data: $('form').serialize(),
+//             type: 'POST',
+//             success: function(response) {
+//                 console.log(response);
+//             },
+//             error: function(error) {
+//                 console.log(error);
+//             }
+//         });
+//     });
+// });

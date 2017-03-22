@@ -1,9 +1,13 @@
 $(document).ready(function() {
-    $('#login-register').click(function(){
+    $('#login-register').on(function(event){
+
+        event.preventDefault(); // tells html to stop loading
+        // data = $('#login-register').serialize()
+
         $.ajax({
             url: '/signUp',
-            data: $('form').serialize(),
-            type: 'POST',
+            data: $('#login-register').serialize(),
+            method: 'POST',
             success: function(response) {
                 console.log(response);
             },

@@ -74,31 +74,36 @@ def addUserEvent():
 	try:
 		if session.get('user_id'):
 			_user_id = session.get('user_id')
-
-			conn = mysql.connect()
-			cursor = conn.cursor()
-			cursor.callproc('sp_getTitle',(_title, _description, _location))
+			_title = request.form['inputTitle']
+			# conn = mysql.connect()
+			# cursor = conn.cursor()
+			# cursor.callproc('sp_getTitle',(_title, _description, _location))
 			# cursor.callproc('sp_addEvent',(_title, _description, _location))
-			data = cursor.fetchall()
-			print (data)
+			# data = cursor.fetchall()
+			# print (data)
 
-			_title = data[0][0]
+			# _title = data[0][0]
 			print ("UserID: ", _user_id)
 			print ("Title: ", _title)
 
+			conn = mysql.connect()
+			cursor = conn.cursor()
 			cursor.callproc('sp_getEventId',(_title,)) #not returning event_id b/c title isn't correct
 			data = cursor.fetchall()
 			print ("getEventId Data: ", data)
 			_event_id = _event[0][0]
-			print (_event)
-			print (_event_id)
-			cursor.close()
-			conn.close()
+			# print ("Event: ", _event)
+			# print ("EventID: ", _event_id)
+			# cursor.close()
+			# conn.close()
 
 			cursor.callproc('sp_addUserEvent',(_user_id, event_id))
 			conn.commit()
 			data = cursor.fetchall()
 			print ("AddUserEvent Data: ", data)
+
+			cursor.close()
+			conn.close()
 
 			if len(data) is 0:
 				conn.commit()
@@ -121,8 +126,6 @@ def addEvent():
 			_title = request.form['inputTitle']
 			_description = request.form['inputDescription']
 			_location = request.form['inputLocation']
-			# session['title'] = _title
-			# print ("Title: ", data[0][0])
 
 			conn = mysql.connect()
 			cursor = conn.cursor()
@@ -143,7 +146,9 @@ def addEvent():
 				conn.commit()
 				cursor.close()
 				conn.close()
-				return redirect('/showUserPage')
+				addUserEvent()
+				# return redirect('/addUserEvent')
+				# return redirect('/showUserPage')
 			else:
 				return render_template('error.html',error = 'An error occurred!')
 		else:
@@ -184,9 +189,7 @@ def signUp():
 
 			if len(data) > 0:
 				if data[0][2] == _password:
-					# session['email'] = _email
 					session['user_id'] = data[0][0]
-					# session['password'] = data[0][1]
 					cursor.close()
 					conn.close()
 					return redirect('/showUserPage')
@@ -198,7 +201,6 @@ def signUp():
 				conn.commit()
 				cursor.callproc('sp_validateLogin',(_email,))
 				data = cursor.fetchall()
-				# session['email'] = _email
 				session['user_id'] = data[0][0]
 				cursor.close()
 				conn.close()
@@ -214,48 +216,6 @@ def signUp():
 		cursor.close()
 		conn.close()
 
-
-# #This just enters user info into the DB
-# @app.route('/signUp', methods=['POST','GET'])
-# def signUp():
-# 	try:
-# 		_username = request.form['inputUsername']
-
-# 		# validate the received values
-# 		if _username:
-# 			# All Good, let's call MySQL
-# 			conn = mysql.connect()
-# 			cursor = conn.cursor()
-# 			cursor.callproc('sp_validateLogin',(_username,))
-# 			data = cursor.fetchall()
-
-# 			if len(data) > 0:
-# 				session['username'] = _username
-# 				session['user_id'] = data[0][0]
-# 				cursor.close()
-# 				conn.close()
-# 				return redirect('/showUserPage')
-
-# 			elif len(data) is 0:
-# 				cursor.callproc('sp_createUser',(_username,))
-# 				conn.commit()
-# 				cursor.callproc('sp_validateLogin',(_username,))
-# 				data = cursor.fetchall()
-# 				session['username'] = _username
-# 				session['user_id'] = data[0][0]
-# 				cursor.close()
-# 				conn.close()
-# 				return redirect('/showUserPage')
-
-# 			else:
-# 				return json.dumps({'error':str(data[0])})
-# 		else:
-# 			return json.dumps({'html':'<span>Enter the required fields</span>'})
-# 	except Exception as e:
-# 		return json.dumps({'error':str(e)})
-# 	else:
-# 		cursor.close()
-# 		conn.close()
 
 
 if __name__ == "__main__":
