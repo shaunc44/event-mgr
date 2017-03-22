@@ -266,7 +266,10 @@ CREATE PROCEDURE `sp_getEventsByUser` (
     IN p_user_id BIGINT
 )
 BEGIN
-    select * from events where user_id = p_user_id;
+    select * from events 
+    inner join users on users.user_id = users_events.user_id 
+    inner join events on events.event_id = users_events.event_id 
+    where users_events.user_id = p_user_id;
 END$$
 
 DELIMITER ;

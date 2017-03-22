@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
     // MUSTACHE.JS
     Mustache.tags = [ '<%', '%>' ];
 
@@ -8,7 +7,7 @@ $(document).ready(function(){
         method : 'GET',
         dataType: 'json',
         success: function(data){
-            // MUSTACHE.JS  -- Tweets diplay
+            // MUSTACHE.JS  -- Events diplay
             var eventsTemplate = $("#eventList").html();
             var eventsRender = Mustache.render(eventsTemplate, data);
             $(".list-group").html(eventsRender);
@@ -17,6 +16,8 @@ $(document).ready(function(){
             console.log(error);
         }
     });
+});
+
 
     // $.ajax({
     //     url : '/getUsername',
@@ -34,4 +35,3 @@ $(document).ready(function(){
     //     }
     // });
 
-});
