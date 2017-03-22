@@ -134,7 +134,7 @@ def addEvent():
 			data = cursor.fetchall()
 			# session['title'] = data[0][0]
 			# print ("Title: ", data[0][0])
-			# print ("AddEvent Data: ", data)
+			# print ("AddEvent Data: ", data)a;dlkjfads;
 
 			if len(data):
 				conn.commit()
