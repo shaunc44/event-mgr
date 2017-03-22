@@ -197,6 +197,8 @@ BEGIN
         p_description,
         p_location
     );
+
+    select title from events order by event_id desc limit 1;
 END$$
 
 DELIMITER ;

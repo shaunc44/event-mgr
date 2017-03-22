@@ -7,9 +7,7 @@ import os
 
 mysql = MySQL()
 app = Flask(__name__, static_url_path='/static')
-#Don't store the secret key this way (always store in separate)
-app.secret_key = 'tobeornottobeasecretkey'
-# app.secret_key = os.urandom(50)
+app.config['SECRET_KEY'] = open('secret_key', 'rb').read() 
 
 
 # MySQL configurations
@@ -18,7 +16,6 @@ app.config['MYSQL_DATABASE_PASSWORD'] = '1234'
 app.config['MYSQL_DATABASE_DB'] = 'event_mgr'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
-
 
 app.config['UPLOAD_FOLDER'] = 'static/Uploads'
 
@@ -72,19 +69,26 @@ def showUserPage():
 # 		return render_template('error.html', error = str(e))
 
 
-@app.route('/addUserEvent', methods=['POST'])
+@app.route('/addUserEvent', methods=['POST', 'GET'])
 def addUserEvent():
 	try:
 		if session.get('user_id'):
 			_user_id = session.get('user_id')
-			_title = session['title']
-			print (_user_id)
-			print (_title)
 
 			conn = mysql.connect()
 			cursor = conn.cursor()
-			cursor.callproc('sp_getEventId',(_title,))
-			_event = cursor.fetchone()
+			cursor.callproc('sp_getTitle',(_title, _description, _location))
+			# cursor.callproc('sp_addEvent',(_title, _description, _location))
+			data = cursor.fetchall()
+			print (data)
+
+			_title = data[0][0]
+			print ("UserID: ", _user_id)
+			print ("Title: ", _title)
+
+			cursor.callproc('sp_getEventId',(_title,)) #not returning event_id b/c title isn't correct
+			data = cursor.fetchall()
+			print ("getEventId Data: ", data)
 			_event_id = _event[0][0]
 			print (_event)
 			print (_event_id)
@@ -94,6 +98,7 @@ def addUserEvent():
 			cursor.callproc('sp_addUserEvent',(_user_id, event_id))
 			conn.commit()
 			data = cursor.fetchall()
+			print ("AddUserEvent Data: ", data)
 
 			if len(data) is 0:
 				conn.commit()
@@ -113,20 +118,28 @@ def addUserEvent():
 def addEvent():
 	try:
 		if session.get('user_id'):
-			# _user_id = session.get('user_id')
 			_title = request.form['inputTitle']
 			_description = request.form['inputDescription']
 			_location = request.form['inputLocation']
-			session['title'] = _title
+			# session['title'] = _title
+			# print ("Title: ", data[0][0])
 
 			conn = mysql.connect()
 			cursor = conn.cursor()
 			cursor.callproc('sp_addEvent',(_title, _description, _location))
-			conn.commit()
-			# cursor.callproc('sp_getEventId')
+			# conn.commit()
 			data = cursor.fetchall()
+			# session['title'] = data[0][0]
+			# print ("Title: ", data[0][0])
+			# print ("AddEvent Data: ", data)
 
-			if len(data) is 0:
+			# if len(data) > 0:
+			# 	session['title'] = data[0][0]
+			# 	conn.commit()
+			# 	cursor.close()
+			# 	conn.close()
+			# 	return redirect('/showUserPage')
+			if len(data):
 				conn.commit()
 				cursor.close()
 				conn.close()
@@ -167,10 +180,11 @@ def signUp():
 			cursor = conn.cursor()
 			cursor.callproc('sp_validateLogin',(_email,))
 			data = cursor.fetchall()
+			print ("SignUp Data: ", data)
 
 			if len(data) > 0:
 				if data[0][2] == _password:
-					session['email'] = _email
+					# session['email'] = _email
 					session['user_id'] = data[0][0]
 					# session['password'] = data[0][1]
 					cursor.close()
@@ -184,7 +198,7 @@ def signUp():
 				conn.commit()
 				cursor.callproc('sp_validateLogin',(_email,))
 				data = cursor.fetchall()
-				session['email'] = _email
+				# session['email'] = _email
 				session['user_id'] = data[0][0]
 				cursor.close()
 				conn.close()
