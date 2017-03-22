@@ -253,6 +253,25 @@ END$$
 DELIMITER ;
 
 
+***************************************************************************
+*******  STORED PROCEDURE TO GET_EVENTS_BY_USER FROM TO DATABASE  *********
+***************************************************************************
+
+USE `event_mgr`;
+DROP procedure IF EXISTS `sp_getEventsByUser`;
+ 
+DELIMITER $$
+USE `event_mgr`$$
+CREATE PROCEDURE `sp_getEventsByUser` (
+    IN p_user_id BIGINT
+)
+BEGIN
+    select * from events where user_id = p_user_id;
+END$$
+
+DELIMITER ;
+
+
 
 
 

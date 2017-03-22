@@ -60,8 +60,7 @@
             </form>
         </section>
 
-        <!-- . references the current object -->
-        <div class="username-header-html"></div>
+        <!-- <div class="username-header-html"></div> -->
 
         <div class="list-group"></div>
 
@@ -71,20 +70,20 @@
 
     </div>
 
-
+<!--
     <script id="username-header-scrpt" type="text/mustache">
-        <%#.%> <!--  '.' references the current object -->
+        <%#.%>   '.' references the current object
             <h1><%Username%>'s Tweets</h1>
         <%/.%>
     </script>
+-->
 
-
-    <script id="tweetList" type="text/mustache">
+    <script id="eventList" type="text/mustache">
         <%#.%> <!-- . references the current object -->
             <a href="#" class="list-group-item active">
                 <h4 class="list-group-item-heading col-md-6"><%Title%></h4>
-                <h6 class="tweet-date col-md-6"><%Date%></h6>
-                <p class="list-group-item-text col-md-12"><%Text%></p>
+                <h6 class="event-date col-md-6"><%Description%></h6>
+                <p class="list-group-item-text col-md-12"><%Location%></p>
             </a>
         <%/.%>
     </script>
@@ -98,7 +97,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
     <script type="text/javascript" src="../static/js/add_event.js"></script>
     <script type="text/javascript" src="../static/js/add_user_event.js"></script>
-    <!-- <script type="text/javascript" src="../static/js/get-user-posts.js"></script> -->
+    <script type="text/javascript" src="../static/js/get_user_events.js"></script>
 
 </body>
 

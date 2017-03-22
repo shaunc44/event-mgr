@@ -39,34 +39,34 @@ def showUserPage():
 
 #Implement this later
 
-# @app.route('/getPostsByUser')
-# def getPostsByUser():
-# 	try:
-# 		if session.get('user_id'):
-# 			_username = session.get('username')
-# 			_user_id = session.get('user_id')
+@app.route('/getEventsByUser')
+def getEventsByUser():
+	try:
+		if session.get('user_id'):
+			# _username = session.get('username')
+			_user_id = session.get('user_id')
 
-# 			con = mysql.connect()
-# 			cursor = con.cursor()
-# 			cursor.callproc('sp_getPostsByUser',(_user_id,))
-# 			posts = cursor.fetchall()
+			con = mysql.connect()
+			cursor = con.cursor()
+			cursor.callproc('sp_getEventsByUser',(_user_id,))
+			events = cursor.fetchall()
 
-# 			posts_dict = []
-# 			for post in reversed(posts):
-# 				print (type(post[2]))
-# 				post_dict = {
-# 					'Id': post[0],
-# 					'Title': post[3],
-# 					'Text': post[4],
-# 					'Date': post[2].strftime("%a, %b %d, %Y")
-# 				}
-# 				posts_dict.append(post_dict)
+			events_dict = []
+			for event in reversed(events):
+				# print (type(event[2]))
+				event_dict = {
+					# 'EventID': event[0],
+					'Title': event[1],
+					'Description': event[2],
+					'Location': event[3].strftime("%a, %b %d, %Y")
+				}
+				events_dict.append(event_dict)
 
-# 			return json.dumps(posts_dict)
-# 		else:
-# 			return render_template('error.html', error = 'Unauthorized Access')
-# 	except Exception as e:
-# 		return render_template('error.html', error = str(e))
+			return json.dumps(events_dict)
+		else:
+			return render_template('error.html', error = 'Unauthorized Access')
+	except Exception as e:
+		return render_template('error.html', error = str(e))
 
 
 @app.route('/addUserEvent', methods=['POST', 'GET'])
@@ -105,54 +105,6 @@ def addUserEvent():
 	else:
 		cursor.close()
 		conn.close()
-
-
-# this works up to line print get EventId
-# @app.route('/addUserEvent', methods=['POST', 'GET'])
-# def addUserEvent():
-# 	try:
-# 		if session.get('user_id'):
-# 			_user_id = session.get('user_id')
-# 			_title = request.form['inputTitle']
-
-# 			print ("UserID: ", _user_id)
-# 			print ("Title: ", _title)
-
-# 			conn = mysql.connect()
-# 			cursor = conn.cursor()
-# 			cursor.callproc('sp_getEventId',(_title,)) #not returning event_id b/c title isn't correct
-# 			data = cursor.fetchall()
-# 			_event_id = data[0][0]
-# 			print ("getEventId: ", _event_id)
-# 			conn.commit()
-# 			# _event_id = _event[0][0]
-# 			# print ("Event: ", _event)
-# 			# print ("EventID: ", _event_id)
-# 			# cursor.close()
-# 			# conn.close()
-
-# 			# conn = mysql.connect()
-# 			# cursor = conn.cursor()
-# 			cursor.callproc('sp_addUserEvent',(_user_id, event_id))
-# 			conn.commit()
-# 			ue_data = cursor.fetchall()
-# 			print ("AddUserEvent Data: ", ue_data)
-
-# 			cursor.close()
-# 			conn.close()
-
-# 			if len(data) is 0:
-# 				conn.commit()
-# 				return redirect('/showUserPage')
-# 			else:
-# 				return render_template('error.html',error = 'An error occurred!')
-# 		else:
-# 			return render_template('error.html',error = 'Unauthorized Access')
-# 	except Exception as e:
-# 		return render_template('error.html',error = str(e))
-# 	else:
-# 		cursor.close()
-# 		conn.close()
 
 
 @app.route('/addEvent', methods=['POST'])
