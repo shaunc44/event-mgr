@@ -75,33 +75,21 @@ def addUserEvent():
 		if session.get('user_id'):
 			_user_id = session.get('user_id')
 			_title = request.form['inputTitle']
-			# conn = mysql.connect()
-			# cursor = conn.cursor()
-			# cursor.callproc('sp_getTitle',(_title, _description, _location))
-			# cursor.callproc('sp_addEvent',(_title, _description, _location))
-			# data = cursor.fetchall()
-			# print (data)
-
-			# _title = data[0][0]
-			print ("UserID: ", _user_id)
-			print ("Title: ", _title)
+			# print ("UserID: ", _user_id)
+			# print ("Title: ", _title)
 
 			conn = mysql.connect()
 			cursor = conn.cursor()
-			cursor.callproc('sp_getEventId',(_title,)) #not returning event_id b/c title isn't correct
+			cursor.callproc('sp_getEventId',(_title,))
 			data = cursor.fetchall()
-			print ("getEventId Data: ", data)
-			_event_id = _event[0][0]
-			# print ("Event: ", _event)
-			# print ("EventID: ", _event_id)
-			# cursor.close()
-			# conn.close()
+			_event_id = data[0][0]
+			# print ("getEventId: ", _event_id)
+			# conn.commit()
 
-			cursor.callproc('sp_addUserEvent',(_user_id, event_id))
+			cursor.callproc('sp_addUserEvent',(_user_id, _event_id))
 			conn.commit()
-			data = cursor.fetchall()
-			print ("AddUserEvent Data: ", data)
-
+			# ue_data = cursor.fetchall()
+			# print ("AddUserEvent Data: ", ue_data)
 			cursor.close()
 			conn.close()
 
@@ -119,6 +107,54 @@ def addUserEvent():
 		conn.close()
 
 
+# this works up to line print get EventId
+# @app.route('/addUserEvent', methods=['POST', 'GET'])
+# def addUserEvent():
+# 	try:
+# 		if session.get('user_id'):
+# 			_user_id = session.get('user_id')
+# 			_title = request.form['inputTitle']
+
+# 			print ("UserID: ", _user_id)
+# 			print ("Title: ", _title)
+
+# 			conn = mysql.connect()
+# 			cursor = conn.cursor()
+# 			cursor.callproc('sp_getEventId',(_title,)) #not returning event_id b/c title isn't correct
+# 			data = cursor.fetchall()
+# 			_event_id = data[0][0]
+# 			print ("getEventId: ", _event_id)
+# 			conn.commit()
+# 			# _event_id = _event[0][0]
+# 			# print ("Event: ", _event)
+# 			# print ("EventID: ", _event_id)
+# 			# cursor.close()
+# 			# conn.close()
+
+# 			# conn = mysql.connect()
+# 			# cursor = conn.cursor()
+# 			cursor.callproc('sp_addUserEvent',(_user_id, event_id))
+# 			conn.commit()
+# 			ue_data = cursor.fetchall()
+# 			print ("AddUserEvent Data: ", ue_data)
+
+# 			cursor.close()
+# 			conn.close()
+
+# 			if len(data) is 0:
+# 				conn.commit()
+# 				return redirect('/showUserPage')
+# 			else:
+# 				return render_template('error.html',error = 'An error occurred!')
+# 		else:
+# 			return render_template('error.html',error = 'Unauthorized Access')
+# 	except Exception as e:
+# 		return render_template('error.html',error = str(e))
+# 	else:
+# 		cursor.close()
+# 		conn.close()
+
+
 @app.route('/addEvent', methods=['POST'])
 def addEvent():
 	try:
@@ -134,7 +170,7 @@ def addEvent():
 			data = cursor.fetchall()
 			# session['title'] = data[0][0]
 			# print ("Title: ", data[0][0])
-			# print ("AddEvent Data: ", data)a;dl;
+			# print ("AddEvent Data: ", data)
 
 			if len(data):
 				conn.commit()
@@ -142,7 +178,7 @@ def addEvent():
 				conn.close()
 				addUserEvent()
 				# return redirect('/addUserEvent')
-				# return redirect('/showUserPage')
+				return redirect('/showUserPage')
 			else:
 				return render_template('error.html',error = 'An error occurred!')
 		else:
