@@ -45,23 +45,25 @@ def getEventsByUser():
 		if session.get('user_id'):
 			# _username = session.get('username')
 			_user_id = session.get('user_id')
-			print (_user_id)
+			print ("UserID: ", _user_id)
 
 			con = mysql.connect()
 			cursor = con.cursor()
 			cursor.callproc('sp_getEventsByUser',(_user_id,))
 			events = cursor.fetchall()
-			print (events)
+			print ("Events: ", events)
 
 			events_dict = []
-			for event in reversed(events):
-				# print (type(event[2]))
+			for event in events:
+				print ("Event: ", event)
 				event_dict = {
+					'Id': event[0],
 					'Title': event[1],
 					'Description': event[2],
-					'Location': event[3].strftime("%a, %b %d, %Y")
+					'Location': event[3]
 				}
 				events_dict.append(event_dict)
+			print ("Events Dict: ", events_dict)
 
 			return json.dumps(events_dict)
 		else:

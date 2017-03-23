@@ -1,4 +1,7 @@
 $(document).ready(function(){
+
+    // event.preventDefault();
+
     // MUSTACHE.JS
     Mustache.tags = [ '<%', '%>' ];
 
